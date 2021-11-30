@@ -1,0 +1,67 @@
+---
+- hosts: all
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  connection: ssh
+  tasks:
+   - name: Add group "admins" to remote server
+     group:
+       name: admins
+       gid: 1010
+       state: present
+
+   - name: Add group "remotes" to remote server
+     group:
+       name: remotes
+       gid: 1011
+       state: present
+
+   - name: Add group "jacks" to remote server
+     group:
+       name: jacks
+       gid: 1012
+       state: present
+
+   - name: Add user "sysadmin" to remote server
+     user:
+       name: sysadmin
+       comment: "Privileged User"
+       uid: 2001
+       group: admins
+       groups: remotes,jacks
+       append: yes
+       shell: /bin/bash
+       generate_ssh_key: yes
+       ssh_key_bits: 2048
+       ssh_key_file: .ssh/id_rsa
+
+   - name: Add user "lee" to remote server
+     user:
+       name: lee
+       comment: "Accountant UnPrivileged User"
+       uid: 2002
+       group: jacks
+       shell: /bin/bash
+       generate_ssh_key: yes
+       ssh_key_bits: 2048
+       ssh_key_file: .ssh/id_rsa
+
+   - name: Add user "jack" to remote server
+     user:
+       name: lonston
+       comment: "Content creator UnPrivileged User"
+       uid: 2003
+       group: remotes
+       shell: /bin/bash
+       generate_ssh_key: yes
+       ssh_key_bits: 2048
+       ssh_key_file: .ssh/id_rsa
+
+   - name: Remove user "james" from remote server
+     user:
+       name: james
+       state: absent
+       remove: yes
+...
