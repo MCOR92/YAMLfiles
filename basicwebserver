@@ -1,0 +1,23 @@
+---
+- name: Create web server
+  hosts: lol
+  remote_user: m
+  become_method: sudo
+  tasks:
+    - name: install http
+      yum:
+       name: httpd
+       state: present
+    - name: check that httpd has started
+      service:
+       name: httpd
+       state: started
+    - name: firewall access to https
+      firewalld:
+       service: http
+       permanent: yes
+       state: enabled
+    - name: Restart the fireall service to load in the firewall changes
+      services:
+       name: firewalld
+       state: restarted
